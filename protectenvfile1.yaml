@@ -1,0 +1,25 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: kubearmorpolicy  # Valid name
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: build-code-deployment-b7b849ff8-5fdvv
+  file:
+    matchPaths:
+    - path: /home/echo/kubernetes-goat/git-dumper/k8s-goat-git/.env
+      readOnly: false
+      action: "Block"  # Prevent access
+      ownerOnly: true  # Only allow access for root
+      severity: 5
+      tags:
+        - example-tag
+    - path: /path/to/.git/config  # Ensure this path is correct
+      readOnly: true
+      action: "Block"  # Prevent access
+      ownerOnly: true  # Only allow access for root
+      severity: 5
+      tags:
+        - example-tag
