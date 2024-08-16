@@ -1,0 +1,32 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: kubearmorpolicy
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: internal-proxy-deployment-7c47db87c6-dn9q8
+  file:
+    matchPaths:
+    - path: /custom/docker/docker.sock
+      readOnly: true
+      action: "Block"  # Block any write access to the Docker socket
+      ownerOnly: true  # Only allow access for root
+      severity: 5
+      tags:
+        - docker-socket
+    - path: /path/to/.git/config  # Ensure this path is correct and adjust as necessary
+      readOnly: true
+      action: "Block"  # Block read access if sensitive
+      ownerOnly: true
+      severity: 5
+      tags:
+        - example-tag
+  process:
+    matchPaths:
+    - path: /usr/bin/docker
+      action: "Block"  # Block execution of Docker binary if not necessary
+      severity: 5
+      tags:
+        - docker-binary
